@@ -44,6 +44,14 @@ class Po extends Extractor implements ExtractorInterface
             $key = $splitLine[0];
             $data = isset($splitLine[1]) ? $splitLine[1] : '';
 
+            if ($key === '#~') {
+                $translation->setDisabled(true);
+
+                $splitLine = preg_split('/\s+/', $data, 2);
+                $key = $splitLine[0];
+                $data = isset($splitLine[1]) ? $splitLine[1] : '';
+            }
+
             switch ($key) {
                 case '#':
                     $translation->addComment($data);
@@ -109,12 +117,16 @@ class Po extends Extractor implements ExtractorInterface
 
                     if (isset($append)) {
                         if ($append === 'Context') {
-                            $translation = $translation->getClone($translation->getContext()."\n".self::convertString($data));
+                            $translation = $translation->getClone($translation->getContext()
+                                ."\n"
+                                .self::convertString($data));
                             break;
                         }
 
                         if ($append === 'Original') {
-                            $translation = $translation->getClone(null, $translation->getOriginal()."\n".self::convertString($data));
+                            $translation = $translation->getClone(null, $translation->getOriginal()
+                                ."\n"
+                                .self::convertString($data));
                             break;
                         }
 

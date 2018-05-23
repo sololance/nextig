@@ -93,14 +93,6 @@ class Instagram implements ExperimentsInterface
     public static $allowDangerousWebUsageAtMyOwnRisk = false;
 
     /**
-     * Set this value to false for the recent 
-     * logins. This is required to use this API
-     * in a webpage for consecutive
-     * @var boolean
-     */
-    public static $sendLoginFlow = true;
-
-    /**
      * UUID.
      *
      * @var string
@@ -521,10 +513,6 @@ class Instagram implements ExperimentsInterface
             return $response;
         }
 
-        if (!self::$sendLoginFlow) {
-            return NULL;
-        }
-
         // Attempt to resume an existing session, or full re-login if necessary.
         // NOTE: The "return" here gives a LoginResponse in case of re-login.
         return $this->_sendLoginFlow(false, $appRefreshInterval);
@@ -635,13 +623,13 @@ class Instagram implements ExperimentsInterface
             $this->_setUser($username, $password);
         }
 
-        return $this->request('accounts/send_two_factor_login_sms/')
+        return $this->ig->request('accounts/send_two_factor_login_sms/')
             ->setNeedsAuth(false)
             ->addPost('two_factor_identifier', $twoFactorIdentifier)
             ->addPost('username', $username)
-            ->addPost('device_id', $this->device_id)
-            ->addPost('guid', $this->uuid)
-            ->addPost('_csrftoken', $this->client->getToken())
+            ->addPost('device_id', $this->ig->device_id)
+            ->addPost('guid', $this->ig->uuid)
+            ->addPost('_csrftoken', $this->ig->client->getToken())
             ->getResponse(new Response\TwoFactorLoginSMSResponse());
     }
 
